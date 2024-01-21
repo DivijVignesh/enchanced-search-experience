@@ -7,6 +7,8 @@ from langchain.document_loaders import DirectoryLoader
 import chromadb
 import gradio as gr
 from llama import query_llama2_EP, query_google_API
+from searchoptimize import searchModify
+
 # Hugging Face api token
 HUGGINGFACEHUB_API_TOKEN = "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"
 
@@ -82,10 +84,14 @@ with gr.Blocks() as demo:
     with gr.Tab("Internet Search"):
         with gr.Row():
             internet_input = gr.Textbox(label="Search Query")            
-            internet_output = gr.Textbox(label="Output")
+            # internet_output = gr.Textbox(label="Output")
+            internet_output= gr.Markdown("""
+                #OUTPUT
+
+            """)
         internet_button = gr.Button("Search")
 
     knowledge_button.click(process_query, inputs=knowledge_input, outputs=[knowledge_output0,knowledge_output1,context])
-    internet_button.click(process_query, inputs=knowledge_input, outputs=internet_output)
+    internet_button.click(searchModify, inputs=internet_input, outputs=internet_output)
 
 demo.launch()
