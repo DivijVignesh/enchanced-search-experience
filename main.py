@@ -33,11 +33,11 @@ def concatenate_documents(document_list):
     print(">>>Prompt engineering process completed successfully<<<")
     return combined_content
 
-hf = initialize_embeddings()
+# hf = initialize_embeddings()
 
-# Replace the path below with the path to your dataset
-example_path = "docs"
-db = process_and_embed_docs(example_path, hf)
+# # Replace the path below with the path to your dataset
+# example_path = "docs"
+# db = process_and_embed_docs(example_path, hf)
 
 endpoint = 'YOUR_ENDPOINT_URL_HERE'
 
@@ -67,7 +67,7 @@ def process_query(query):
 #     title="Knowledge Search"
 # )
 
-# demo.launch(share=True)
+
 
 
 with gr.Blocks() as demo:
@@ -91,7 +91,10 @@ with gr.Blocks() as demo:
             """)
         internet_button = gr.Button("Search")
 
-    knowledge_button.click(process_query, inputs=knowledge_input, outputs=[knowledge_output0,knowledge_output1,context])
-    internet_button.click(searchModify, inputs=internet_input, outputs=internet_output)
+        internet_button.click(searchModify, inputs=internet_input, outputs=internet_output)
+    # knowledge_button.click(process_query, inputs=knowledge_input, outputs=[knowledge_output0,knowledge_output1,context])
+ 
+demo.launch(share=True)
+
 
 demo.launch()
