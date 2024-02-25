@@ -33,12 +33,12 @@ def concatenate_documents(document_list):
     print(">>>Prompt engineering process completed successfully<<<")
     return combined_content
 
-# hf = initialize_embeddings()
+hf = initialize_embeddings()
 
-# # Replace the path below with the path to your dataset
-# example_path = "docs"
-# db = process_and_embed_docs(example_path, hf)
-
+# Replace the path below with the path to your dataset
+example_path = "docs"
+db = process_and_embed_docs(example_path, hf)
+db2=process_and_embed_docs("internet", hf)
 endpoint = 'YOUR_ENDPOINT_URL_HERE'
 
 
@@ -57,7 +57,20 @@ def process_query(query):
     answer = query_google_API(combined_context, query)
     return answer.replace("\\n", "\n"), sourceout,combined_context
 
-
+def process_internet(query):
+    retrieved_docs = db2.similarity_search(query)
+    # print(retrieved_docs)
+    sources= set()
+    for docs in retrieved_docs:
+      sources.add(docs.metadata['source'])
+    print(sources)
+    sourceout="Answers are found from the following source files:\n"
+    for src in sources:
+        sourceout+=src+"\n"
+    combined_context = concatenate_documents(retrieved_docs)
+    # print(combined_context)
+    answer = searchModify(query,combined_context)
+    return answer
 # print(process_query("which college is divij, manasa are studying in?"))
 
 # demo = gr.Interface(
@@ -80,6 +93,8 @@ with gr.Blocks() as demo:
         knowledge_output1 = gr.Textbox(label="Sources")
         context= gr.Textbox(label="Context")
         knowledge_button = gr.Button("Search")
+        knowledge_button.click(process_query, inputs=knowledge_input, outputs=[knowledge_output0,knowledge_output1,context])
+
         
     with gr.Tab("Internet Search"):
         with gr.Row():
@@ -91,10 +106,9 @@ with gr.Blocks() as demo:
             """)
         internet_button = gr.Button("Search")
 
-        internet_button.click(searchModify, inputs=internet_input, outputs=internet_output)
-    # knowledge_button.click(process_query, inputs=knowledge_input, outputs=[knowledge_output0,knowledge_output1,context])
+        internet_button.click(process_internet, inputs=internet_input, outputs=internet_output)
  
-demo.launch(share=True)
+# demo.launch(share=True)
 
 
 demo.launch()
